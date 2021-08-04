@@ -6,10 +6,6 @@
 #include <Input/InputI2C.h>
 #include <Loop/LoopManager.h>
 #include "Star.h"
-#include <ArduinoJson.h>
-#include <spiffs_api.h>
-#include <gpio.h>
-#include <avr/pgmspace.h>
 #include <Support/Context.h>
 #include "../Nibble.hpp"
 #include <UI/Image.h>
@@ -42,6 +38,7 @@ private:
 	int lives;
 	int gamelevel;
 	int shipx;
+	int shipy;
 	int invaderx[30];
 	int invadery[30];
 	int invaders[30];

@@ -4,14 +4,10 @@
 #include "Highscore.h"
 SpaceInvaders::SpaceInvaders* SpaceInvaders::SpaceInvaders::instance = nullptr;
 SpaceInvaders::SpaceInvaders::SpaceInvaders(Display& display) :
-		Context(display), baseSprite(display.getBaseSprite()),
+		Context(display), baseSprite(screen.getSprite()),
 		buttons(Input::getInstance()), display(&display)
 {
-	Serial.println("construcctor");
-	delay(5);
-	Serial.println(baseSprite->created() ? "created" : "not created");
 	instance = this;
-
 	randomSeed(millis()*micros());
 	starsSetup();
 	gamestatus = "title";
@@ -49,7 +45,6 @@ void SpaceInvaders::SpaceInvaders::draw(){
 			baseSprite->fillRect(stars[i].x, stars[i].y, 2, 2, STAR_COLOR);
 			yield();
 		}
-		showscore();
 		drawplayership(); // draw player ship
 		drawplayershot(); // move + draw player shoot
 		drawinvaders(); // draw invaders
@@ -79,13 +74,11 @@ void SpaceInvaders::SpaceInvaders::draw(){
 	{
 		baseSprite->clear(TFT_BLACK);
 		baseSprite->setTextColor(TFT_RED);
-		baseSprite->setCursor(0, baseSprite->height()/2 - 18);
 		baseSprite->setTextFont(2);
 		baseSprite->setTextSize(2);
-		baseSprite->printCenter("Paused");
-		baseSprite->setCursor(4, 110);
+		baseSprite->drawString("Paused", screen.getWidth()/2, baseSprite->height()/2 - 10);
 		baseSprite->setFreeFont(TT1);
-		baseSprite->printCenter("A:RESUME  B:QUIT");
+		baseSprite->drawString("A:RESUME    B:QUIT", screen.getWidth()/2, baseSprite->height() - 15);
 	}
 	if(gamestatus == "eraseData")
 	{
@@ -214,7 +207,7 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 		enterInitialsUpdate();
 	}
 	draw();
-	display->commit();
+	screen.commit();
 }
 void SpaceInvaders::SpaceInvaders::starsSetup()
 {
@@ -238,6 +231,7 @@ void SpaceInvaders::SpaceInvaders::newgame() {
 	lives = 3;
 	gamelevel = 0;
 	shipx = 60;
+	shipy = screen.getHeight() - 14;
 	shotx = -1;
 	shoty = -1;
 	deadcounter = -1;
@@ -312,11 +306,9 @@ void SpaceInvaders::SpaceInvaders::showscore() {
 		baseSprite->setTextColor(TFT_WHITE);
 		baseSprite->setFreeFont(TT1);
 		baseSprite->setTextSize(2);
-		baseSprite->cursor_x= 84 - 4 * (score > 9) - 4 * (score > 99) - 4 * (score > 999);
-		baseSprite->cursor_y = 10;
+		baseSprite->setCursor(117 - 4 * (score > 9) - 4 * (score > 99) - 4 * (score > 999), 12);
 		baseSprite->print(score);
-		baseSprite->cursor_x = 112;
-		baseSprite->cursor_y = 10;
+		baseSprite->setCursor(144, 12);
 		baseSprite->print(gamelevel + 1);
 	}
 }
@@ -382,10 +374,10 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 //----------------------------------------------------------------------------
 void SpaceInvaders::SpaceInvaders::drawplayership() {
 	if (deadcounter == -1) {
-		drawBitmap(shipx, 110, invaderz_playership[0], TFT_WHITE, 2);
+		drawBitmap(shipx, shipy, invaderz_playership[0], TFT_WHITE, 2);
 	}
 	else {
-		drawBitmap(shipx, 110, invaderz_playership[1 + invadershotframe], TFT_YELLOW, 2);
+		drawBitmap(shipx, shipy, invaderz_playership[1 + invadershotframe], TFT_YELLOW, 2);
 		handledeath();
 	}
 }
@@ -810,20 +802,18 @@ void SpaceInvaders::SpaceInvaders::showtitle() {
 		baseSprite->fillRect(stars[i].x, stars[i].y, 2, 2, STAR_COLOR);
 	}
 	baseSprite->setTextColor(TFT_WHITE);
-	baseSprite->drawIcon(invaderz_titleLogo, 4, 10, 60, 18, 2, TFT_BLACK);
+	baseSprite->drawIcon(invaderz_titleLogo, (screen.getWidth() - 60*2) / 2, 10, 60, 18, 2, TFT_BLACK);
 	baseSprite->setTextColor(TFT_RED);
 	baseSprite->setFreeFont(TT1);
 	baseSprite->setTextSize(2);
-	baseSprite->setCursor(10, 80);
-	baseSprite->printCenter("START");
-	baseSprite->setCursor(10, 100);
-	baseSprite->printCenter("HIGHSCORES");
-	baseSprite->setCursor(10, 120);
-	baseSprite->printCenter("QUIT");
+	baseSprite->setTextDatum(textdatum_t::bottom_center);
+	baseSprite->drawString("START", screen.getWidth()/2, 67);
+	baseSprite->drawString("HIGHSCORES", screen.getWidth()/2, 87);
+	baseSprite->drawString("QUIT", screen.getWidth()/2, 107);
 	if(blinkState)
 	{
-		baseSprite->drawRect(15, 67 + cursor * 20, 98, 16, TFT_RED);
-		baseSprite->drawRect(14, 66 + cursor * 20, 100, 18, TFT_RED);
+		baseSprite->drawRect((screen.getWidth() - 98) / 2, 52 + cursor * 20, 98, 16, TFT_RED);
+		baseSprite->drawRect((screen.getWidth() - 100) / 2, 51 + cursor * 20, 100, 18, TFT_RED);
 	}
 }
 void SpaceInvaders::SpaceInvaders::titleSetup()

@@ -17,8 +17,8 @@
 #include <Loop/LoopManager.h>
 #include <ArduinoJson.h>
 #include <spiffs_api.h>
-#include <gpio.h>
-#include <avr/pgmspace.h>
+
+
 #include "Nibble.hpp"
 #include <Audio/Piezo.h>
 
