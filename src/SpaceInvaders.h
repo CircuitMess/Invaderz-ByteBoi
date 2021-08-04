@@ -39,10 +39,10 @@ private:
 	int gamelevel;
 	int shipx;
 	int shipy;
-	int invaderx[30];
-	int invadery[30];
-	int invaders[30];
-	int invaderframe[30];
+	int invaderx[40];
+	int invadery[40];
+	int invaders[40];
+	int invaderframe[40];
 	int invaderanz;
 	int invaderctr;
 	int checkdir;
@@ -91,7 +91,7 @@ private:
 	bool screenChange = 0;
 	static SpaceInvaders* instance;
 	Display* display;
-	const uint8_t invadersColumns = 6;
+	const uint8_t invadersColumns = 8;
 	const uint8_t invadersRows = 5;
 
 	void starsSetup();

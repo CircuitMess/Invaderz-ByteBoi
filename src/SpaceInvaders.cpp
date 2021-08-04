@@ -43,7 +43,7 @@ void SpaceInvaders::SpaceInvaders::draw(){
 			baseSprite->drawPixel(stars[i].x, stars[i].y, BACKGROUND_COLOR);
 			// Draw the star at its new coordinate.
 			baseSprite->fillRect(stars[i].x, stars[i].y, 2, 2, STAR_COLOR);
-			yield();
+
 		}
 		drawplayership(); // draw player ship
 		drawplayershot(); // move + draw player shoot
@@ -289,12 +289,12 @@ void SpaceInvaders::SpaceInvaders::newlevel() {
 			break;
 		}
 		invaderframe[i] = 0;
-		yield();
+
 	}
-	for (int i = 0; i < 4; i++) {
-		bunkers[i] = 0;
-		if (gamelevel > 5) { bunkers[i] = -1; }
-		yield();
+	for (int & bunker : bunkers) {
+		bunker = 0;
+		if (gamelevel > 5) { bunker = -1; }
+
 	}
 	gamestatus = "running";
 }
@@ -362,7 +362,7 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 	buttons->setBtnPressCallback(BTN_A, [](){
 		if (instance->shotx == -1 && instance->deadcounter == -1) {
 			instance->shotx = instance->shipx + 6;
-			instance->shoty = 106;
+			instance->shoty = instance->shipy - 2;
 			Piezo.tone(400, 50);
 		}
 	});
@@ -411,7 +411,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 					invaderctr = 0;
 					checkdir = 1;
 				}
-				yield();
+
 			}
 		}
 		else
@@ -454,7 +454,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 		}
 
 		// determine screen border hit -> go down, then change direction
-		if (invaderx[invaderctr] > 108 && invaderxr > 0) {
+		if (invaderx[invaderctr] > screen.getWidth() - 20 && invaderxr > 0) {
 			nextxdir = -4;
 			nextydir = 4;
 		}
@@ -499,7 +499,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 //----------------------------------------------------------------------------
 void SpaceInvaders::SpaceInvaders::drawinvaders() {
 	infoshow = 1;
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 40; i++) {
 		if (invaders[i] != -1) {
 			if (invaders[i] == 0) drawBitmap(invaderx[i], invadery[i], invaderz_invader[invaders[i] + invaderframe[i]], TFT_ORANGE, 2);
 			if (invaders[i] == 2) drawBitmap(invaderx[i], invadery[i], invaderz_invader[invaders[i] + invaderframe[i]], TFT_PINK, 2);
@@ -530,7 +530,7 @@ void SpaceInvaders::SpaceInvaders::drawinvaders() {
 
 			// invaderDestroyed->play();
 		}
-		yield();
+
 	}
 }
 //----------------------------------------------------------------------------
@@ -557,8 +557,8 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot() {
 
 			// check collission: invadershot & bunker
 			for (int u = 0; u < 4; u++) {
-				checkl = 12 + u * 30;
-				checkr = 12 + u * 30 + 14;
+				checkl = 22 + i * 36;
+				checkr = 22 + i * 36 + 14;
 				checkt = 90;
 				checkb = 100;
 				if (bunkers[u] != -1 && invadershotx[i] + 1 >= checkl && invadershotx[i] <= checkr && invadershoty[i] + 3 >= checkt && invadershoty[i] <= checkb) {
@@ -568,14 +568,14 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot() {
 					invadershoty[i] = -1;
 					invadershots--;
 				}
-				yield();
+
 			}
 
 			// check collission: invadershot & player
 			checkl = shipx;
 			checkr = shipx + 12;
-			checkt = 107;
-			checkb = 110;
+			checkt = shipy;
+			checkb = shipy + 6;
 			if (deadcounter == -1 && invadershotx[i] + 1 >= checkl && invadershotx[i] <= checkr && invadershoty[i] + 3 >= checkt && invadershoty[i] <= checkb) {
 				deadcounter = 60;
 				// destroyed->note(10, 0.05);
@@ -597,20 +597,19 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot() {
 			}
 
 			// invadershoot on bottom off screen?
-			if (invadershoty[i] > 128) {
+			if (invadershoty[i] > screen.getHeight()) {
 				invadershotx[i] = -1;
 				invadershoty[i] = -1;
 				invadershots--;
 			}
 		}
-		yield();
 	}
 }
 //----------------------------------------------------------------------------
 void SpaceInvaders::SpaceInvaders::drawbunkers() {
 	for (int i = 0; i < 4; i++) {
-		checkl = 12 + i * 30;
-		checkr = 12 + i * 30 + 14;
+		checkl = 22 + i * 36;
+		checkr = 22 + i * 36 + 14;
 		checkt = 90;
 		checkb = 100;
 		if (bunkers[i] != -1 && shotx >= checkl && shotx <= checkr && shoty + 2 >= checkt && shoty <= checkb) {
@@ -621,9 +620,8 @@ void SpaceInvaders::SpaceInvaders::drawbunkers() {
 		}
 
 		if (bunkers[i] != -1) {
-			drawBitmap(12 + i * 30, 90, invaderz_bunker[bunkers[i]], TFT_GREEN, 2);
+			drawBitmap(12 + i * 36, 90, invaderz_bunker[bunkers[i]], TFT_GREEN, 2);
 		}
-		yield();
 	}
 }
 //----------------------------------------------------------------------------
@@ -645,7 +643,7 @@ void SpaceInvaders::SpaceInvaders::saucerappears() {
 				saucerdir = 1;
 			}
 			else {
-				saucerx = 146;
+				saucerx = screen.getWidth() + 18;
 				saucerdir = -1;
 			}
 		}
@@ -655,7 +653,7 @@ void SpaceInvaders::SpaceInvaders::saucerappears() {
 void SpaceInvaders::SpaceInvaders::movesaucer() {
 	if (saucers == 0) {
 		saucerx = saucerx + saucerdir;
-		if (saucerx <= 0 || saucerx >= 146) {
+		if (saucerx <= 0 || saucerx >= screen.getWidth() + 18) {
 	// removeTrack(ufoSound);
 	// mainMusic->resume();
 	// addTrack(mainMusic);
