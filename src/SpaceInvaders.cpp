@@ -2,6 +2,7 @@
 #include "sprites.hpp"
 #include <Audio/Piezo.h>
 #include "Highscore.h"
+uint drawTime = 0;
 SpaceInvaders::SpaceInvaders* SpaceInvaders::SpaceInvaders::instance = nullptr;
 SpaceInvaders::SpaceInvaders::SpaceInvaders(Display& display) :
 		Context(display), baseSprite(screen.getSprite()),
@@ -63,22 +64,24 @@ void SpaceInvaders::SpaceInvaders::draw(){
 		drawsaucer(); // draw saucer & remove if hit
 		baseSprite->setTextColor(TFT_RED);
 		baseSprite->setTextSize(2);
-		baseSprite->setTextFont(1);
-		baseSprite->drawRect(5, 45, 118, 38, TFT_WHITE);
-		baseSprite->drawRect(4, 44, 120, 40, TFT_WHITE);
-		baseSprite->fillRect(6, 46, 116, 36, TFT_BLACK);
-		baseSprite->setCursor(47, 57);
-		baseSprite->printCenter("GAME OVER");
+		baseSprite->setFont(&fonts::Font0);
+		baseSprite->drawRect(14, 41, 134, 38, TFT_WHITE);
+		baseSprite->drawRect(13, 40, 136, 40, TFT_WHITE);
+		baseSprite->fillRect(15, 42, 132, 36, TFT_BLACK);
+		baseSprite->setTextDatum(textdatum_t::middle_center);
+		baseSprite->drawString("GAME OVER", screen.getWidth() / 2, screen.getHeight() / 2);
+		baseSprite->setTextDatum(textdatum_t::bottom_center);
+
 	}
 	if(gamestatus == "paused")
 	{
 		baseSprite->clear(TFT_BLACK);
 		baseSprite->setTextColor(TFT_RED);
-		baseSprite->setTextFont(2);
+		baseSprite->setFont(&fonts::Font2);
 		baseSprite->setTextSize(2);
-		baseSprite->drawString("Paused", screen.getWidth()/2, baseSprite->height()/2 - 10);
+		baseSprite->drawString("Paused", screen.getWidth()/2 + 5, baseSprite->height()/2 - 10);
 		baseSprite->setFreeFont(TT1);
-		baseSprite->drawString("A:RESUME    B:QUIT", screen.getWidth()/2, baseSprite->height() - 15);
+		baseSprite->drawString("A:RESUME      B:QUIT", screen.getWidth()/2 + 5, baseSprite->height() - 15);
 	}
 	if(gamestatus == "eraseData")
 	{
@@ -180,8 +183,6 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 				instance->setButtonsCallbacks();
 			});
 			buttons->setBtnPressCallback(BTN_B, [](){
-				Serial.println("going to title");
-				Serial.println(instance->highscoresPath);
 				instance->gamestatus = "title";
 			});
 		}
@@ -221,7 +222,7 @@ void SpaceInvaders::SpaceInvaders::starsSetup()
 void SpaceInvaders::SpaceInvaders::drawBitmap(int16_t x, int16_t y, const byte *bitmap, uint16_t color, uint8_t scale) {
 	uint16_t w = *(bitmap++);
 	uint16_t h = *(bitmap++);
-	baseSprite->drawMonochromeIcon(bitmap, x, y, w, h, scale, color);
+	baseSprite->drawBitmap(x, y, bitmap, w, h, color, scale);
 }
 
 //ported nonstandard
@@ -230,7 +231,7 @@ void SpaceInvaders::SpaceInvaders::newgame() {
 	score = 0;
 	lives = 3;
 	gamelevel = 0;
-	shipx = 60;
+	shipx = screen.getWidth() / 2 - 4;
 	shipy = screen.getHeight() - 14;
 	shotx = -1;
 	shoty = -1;
@@ -257,11 +258,11 @@ void SpaceInvaders::SpaceInvaders::newlevel() {
 	yeahtimer = 0;
 	invadershottimer = 120;
 	saucertimer = 480;
-	int down = gamelevel;
-	if (gamelevel > 8) { down = 16*2; }
+	int down = gamelevel * 2;
+	if (gamelevel > 8) { down = 20; }
 	for (int i = 0; i < invadersColumns*invadersRows; i++) {
 		invaderx[i] = 10 + i%invadersColumns * 16;
-		invadery[i] = 14 + 12*int(i/invadersColumns);
+		invadery[i] = 14 + 12*int(i/invadersColumns) + down;
 		// invadery[i] = 14 + down;
 		// invadery[i + 6] = 13*2 + down;
 		// invadery[i + 12] = 19*2 + down;
@@ -289,12 +290,10 @@ void SpaceInvaders::SpaceInvaders::newlevel() {
 			break;
 		}
 		invaderframe[i] = 0;
-
 	}
 	for (int & bunker : bunkers) {
 		bunker = 0;
 		if (gamelevel > 5) { bunker = -1; }
-
 	}
 	gamestatus = "running";
 }
@@ -329,7 +328,7 @@ void SpaceInvaders::SpaceInvaders::handledeath() {
 	if (deadcounter == 0) {
 		deadcounter = -1;
 		lives--;
-		shipx = 60;
+		shipx = screen.getWidth() / 2 - 4;
 		if (lives == 0) { gamestatus = "gameover"; }
 	}
 }
@@ -351,12 +350,12 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 	clearButtonCallbacks();
 	buttons->setButtonHeldRepeatCallback(BTN_LEFT, 10, [](uint){
 		if (instance->shipx > 0 && instance->deadcounter == -1) {
-			instance->shipx-=1;
+			instance->shipx-=3;
 		}
 	});
 	buttons->setButtonHeldRepeatCallback(BTN_RIGHT, 10, [](uint){
-		if (instance->shipx < 111 && instance->deadcounter == -1) {
-			instance->shipx+=1;
+		if (instance->shipx < 143 && instance->deadcounter == -1) {
+			instance->shipx+=3;
 		}
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
@@ -391,7 +390,7 @@ void SpaceInvaders::SpaceInvaders::drawplayershot() {
 void SpaceInvaders::SpaceInvaders::updatePlayerShot()
 {
 	if (shotx != -1) {
-		shoty = shoty - 2;
+		shoty = shoty - 4;
 		if (shoty < 0) {
 			shotx = -1;
 			shoty = -1;
@@ -407,7 +406,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 		{
 			while (invaders[invaderctr] == -1){
 				invaderctr++;
-				if (invaderctr >= 30) {
+				if (invaderctr >= invadersColumns*invadersRows) {
 					invaderctr = 0;
 					checkdir = 1;
 				}
@@ -417,7 +416,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 		else
 		{
 			invaderctr++;
-			if (invaderctr >= 30) {
+			if (invaderctr >= invadersColumns*invadersRows) {
 				invaderctr = 0;
 				checkdir = 1;
 			}
@@ -449,7 +448,7 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 		}
 
 		// determine game over if invaders reach bottom
-		if (invadery[invaderctr] > 100) {
+		if (invadery[invaderctr] >= shipy - 14) {
 			gamestatus = "gameover";
 		}
 
@@ -553,12 +552,12 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot() {
 	// move invadershots, draw & check collission
 	for (int i = 0; i < 4; i++) {
 		if (invadershotx[i] != -1) {
-			invadershoty[i] = invadershoty[i] + 1;
+			invadershoty[i] = invadershoty[i] + 3;
 
 			// check collission: invadershot & bunker
 			for (int u = 0; u < 4; u++) {
-				checkl = 22 + i * 36;
-				checkr = 22 + i * 36 + 14;
+				checkl = 22 + u * 36;
+				checkr = 22 + u * 36 + 14;
 				checkt = 90;
 				checkb = 100;
 				if (bunkers[u] != -1 && invadershotx[i] + 1 >= checkl && invadershotx[i] <= checkr && invadershoty[i] + 3 >= checkt && invadershoty[i] <= checkb) {
@@ -620,7 +619,7 @@ void SpaceInvaders::SpaceInvaders::drawbunkers() {
 		}
 
 		if (bunkers[i] != -1) {
-			drawBitmap(12 + i * 36, 90, invaderz_bunker[bunkers[i]], TFT_GREEN, 2);
+			drawBitmap(22 + i * 36, 90, invaderz_bunker[bunkers[i]], TFT_GREEN, 2);
 		}
 	}
 }
@@ -711,33 +710,28 @@ void SpaceInvaders::SpaceInvaders::eraseDataSetup()
 void SpaceInvaders::SpaceInvaders::eraseDataDraw()
 {
 	baseSprite->clear(TFT_BLACK);
-	baseSprite->setTextFont(2);
+	baseSprite->setFont(&fonts::Font2);
 	baseSprite->setTextColor(TFT_WHITE);
-	baseSprite->setCursor(4, 5);
-	baseSprite->printCenter("ARE YOU SURE?");
-	baseSprite->setCursor(4, 25);
-	baseSprite->printCenter("This cannot");
-	baseSprite->setCursor(4, 41);
-	baseSprite->printCenter("be reverted!");
+	baseSprite->drawString("ARE YOU SURE?", screen.getWidth() / 2, 17);
+	baseSprite->drawString("This cannot be reverted!", screen.getWidth() / 2, 37);
+//	baseSprite->drawString("", screen.getWidth() / 2, 53);
 
-	baseSprite->setCursor(10, 102);
-	baseSprite->print("B:");
-	baseSprite->setCursor(48, 102);
-	baseSprite->print("Cancel");
+	baseSprite->drawString("B: Cancel", screen.getWidth() / 2, 105);
 
-	baseSprite->setCursor(10, 81);
+	baseSprite->setCursor(35, 81);
 	baseSprite->print("A:");
 
 	if (blinkState){
-		baseSprite->drawRect((baseSprite->width() - 60)/2 + 5, 80, 30*2, 9*2, TFT_RED);
+		baseSprite->drawRect(55, 64, 30*2, 9*2, TFT_RED);
+		baseSprite->drawRect(55, 64, 30*2, 9*2, TFT_RED);
 		baseSprite->setTextColor(TFT_RED);
-		baseSprite->setCursor(46, 81);
+		baseSprite->setCursor(62, 81);
 		baseSprite->print("DELETE");
 	}
 	else {
-		baseSprite->fillRect((baseSprite->width() - 60)/2 + 5, 80, 30*2, 9*2, TFT_RED);
+		baseSprite->fillRect(55, 64, 30*2, 9*2, TFT_RED);
 		baseSprite->setTextColor(TFT_WHITE);
-		baseSprite->setCursor(46, 81);
+		baseSprite->setCursor(62, 81);
 		baseSprite->print("DELETE");
 	}
 }
@@ -765,19 +759,16 @@ void SpaceInvaders::SpaceInvaders::dataDisplaySetup()
 void SpaceInvaders::SpaceInvaders::dataDisplay()
 {
 	baseSprite->clear(TFT_BLACK);
-	baseSprite->setCursor(32, -2);
 	baseSprite->setTextSize(1);
-	baseSprite->setTextFont(2);
+	baseSprite->setFont(&fonts::Font2);
 	baseSprite->setTextColor(TFT_RED);
-	baseSprite->printCenter("HIGHSCORES");
+	baseSprite->drawString("HIGHSCORES", screen.getWidth() / 2, 15);
 	baseSprite->setCursor(3, 110);
 	for (int i = 1; i < 6;i++)
 	{
-		baseSprite->setCursor(6, i * 20);
+		baseSprite->setCursor(22, 16 + i * 16);
 		if(i <= Highscore.count())
 		{
-			Serial.printf("%d.   %.3s    %04d\n", i, Highscore.get(i - 1).name, Highscore.get(i - 1).score);
-			Serial.println();
 			baseSprite->printf("%d.   %.3s    %04d", i, Highscore.get(i - 1).name, Highscore.get(i - 1).score);
 		}
 		else
@@ -785,9 +776,7 @@ void SpaceInvaders::SpaceInvaders::dataDisplay()
 			baseSprite->printf("%d.    ---   ----", i);
 		}
 	}
-	Serial.println("---------------");
-	baseSprite->setCursor(2, 115);
-	baseSprite->print("Press UP to erase");
+	baseSprite->drawString("Press UP to erase", screen.getWidth() / 2, 117);
 }
 
 void SpaceInvaders::SpaceInvaders::showtitle() {
@@ -800,18 +789,18 @@ void SpaceInvaders::SpaceInvaders::showtitle() {
 		baseSprite->fillRect(stars[i].x, stars[i].y, 2, 2, STAR_COLOR);
 	}
 	baseSprite->setTextColor(TFT_WHITE);
-	baseSprite->drawIcon(invaderz_titleLogo, (screen.getWidth() - 60*2) / 2, 10, 60, 18, 2, TFT_BLACK);
+	baseSprite->drawIcon(titleLogo, (screen.getWidth() - 73*2) / 2, 7, 73, 21, 2, TFT_WHITE);
 	baseSprite->setTextColor(TFT_RED);
 	baseSprite->setFreeFont(TT1);
 	baseSprite->setTextSize(2);
 	baseSprite->setTextDatum(textdatum_t::bottom_center);
-	baseSprite->drawString("START", screen.getWidth()/2, 67);
-	baseSprite->drawString("HIGHSCORES", screen.getWidth()/2, 87);
-	baseSprite->drawString("QUIT", screen.getWidth()/2, 107);
+	baseSprite->drawString("START", screen.getWidth()/2 + 5, 75);
+	baseSprite->drawString("HIGHSCORES", screen.getWidth()/2 + 5, 95);
+	baseSprite->drawString("QUIT", screen.getWidth()/2 + 5, 115);
 	if(blinkState)
 	{
-		baseSprite->drawRect((screen.getWidth() - 98) / 2, 52 + cursor * 20, 98, 16, TFT_RED);
-		baseSprite->drawRect((screen.getWidth() - 100) / 2, 51 + cursor * 20, 100, 18, TFT_RED);
+		baseSprite->drawRect((screen.getWidth() - 98) / 2, 60 + cursor * 20, 98, 16, TFT_RED);
+		baseSprite->drawRect((screen.getWidth() - 100) / 2, 59 + cursor * 20, 100, 18, TFT_RED);
 	}
 }
 void SpaceInvaders::SpaceInvaders::titleSetup()
@@ -956,26 +945,26 @@ void SpaceInvaders::SpaceInvaders::enterInitialsUpdate() {
 }
 void SpaceInvaders::SpaceInvaders::enterInitialsDraw() {
 	baseSprite->clear(TFT_BLACK);
-    baseSprite->setCursor(16, 8);
-    baseSprite->setTextFont(2);
+    baseSprite->setFont(&fonts::Font2);
     baseSprite->setTextColor(TFT_WHITE);
     baseSprite->setTextSize(1);
-    baseSprite->printCenter("ENTER NAME");
-    baseSprite->setCursor(20, 80);
-	
-    if(hiscoreBlink && score > tempScore)
-      baseSprite->printCenter("NEW HIGH!");
-    else
-      baseSprite->printf("SCORE: %04d", score);
+    baseSprite->drawString("ENTER NAME", screen.getWidth() / 2, 16);
 
-    baseSprite->setCursor(40, 40);
+    if(hiscoreBlink && score > tempScore)
+    	baseSprite->drawString("NEW HIGH!", screen.getWidth() / 2, 80);
+    else{
+    	baseSprite->setCursor(39, 80);
+    	baseSprite->printf("SCORE: %04d", score);
+    }
+
+    baseSprite->setCursor(66, 55);
     baseSprite->print(name[0]);
-	baseSprite->setCursor(55, 40);
+	baseSprite->setCursor(81, 55);
     baseSprite->print(name[1]);
-	baseSprite->setCursor(70, 40);
+	baseSprite->setCursor(96, 55);
     baseSprite->print(name[2]);
     // baseSprite->drawRect(30, 38, 100, 20, TFT_WHITE);
 	if(blinkState){
-		baseSprite->drawFastHLine(38 + 15*charCursor, 56, 12, TFT_WHITE);
+		baseSprite->drawFastHLine(63 + 15*charCursor, 54, 12, TFT_WHITE);
 	}
 }

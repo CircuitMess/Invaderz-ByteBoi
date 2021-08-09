@@ -18,7 +18,7 @@ namespace SpaceInvaders
 constexpr int STAR_COUNT = 30;            // Number of stars on the screen. Arduino UNO maxes out around 250.
 constexpr int BACKGROUND_COLOR = 0x0000;   // Background color in hex. 0x0000 is black.
 constexpr int STAR_SPEED_MIN = 1;          // Minimum movement in pixels per update. (value is inclusive)
-constexpr int STAR_SPEED_MAX = 2;         // Maximum movement in pixels per update. (value is inclusive)
+constexpr int STAR_SPEED_MAX = 4;         // Maximum movement in pixels per update. (value is inclusive)
 constexpr int STAR_COLOR = 0xffff;  
 
 class SpaceInvaders: public Context, public LoopListener{
