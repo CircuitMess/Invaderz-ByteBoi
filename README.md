@@ -5,8 +5,8 @@ Based on the code from [Yoda Zhang](http://www.yodasvideoarcade.com/) - [Invader
 
 Also using code for star field effect from [dfm's Star Field](https://github.com/dfm/Star-Field).
 
-![screenshot1](https://github.com/CircuitMess/Invaderz-ByteBoi/master/Screenshots/screenshot1.bmp)
-![screenshot2](https://github.com/CircuitMess/Invaderz-ByteBoi/master/Screenshots/screenshot2.bmp)
+![screenshot1](https://github.com/CircuitMess/Invaderz-ByteBoi/raw/master/Screenshots/screenshot1.bmp)
+![screenshot2](https://github.com/CircuitMess/Invaderz-ByteBoi/raw/master/Screenshots/screenshot2.bmp)
 
 <br/>
 
