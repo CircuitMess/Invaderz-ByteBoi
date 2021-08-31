@@ -11,12 +11,13 @@ struct GameInfo {
 
 #include <Arduino.h>
 #include <Display/Display.h>
+#include <SPIFFS.h>
 #include "bitmaps/invaderz_icon.hpp"
 #include "src/SpaceInvaders.h"
 
 const GameInfo InvaderzInfo {
 		"Invaderz",
 		"A remake of the classic space invaders.",
-		invaderz_icon,
+		[]() -> fs::File { return SPIFFS.open("/invaderz.raw"); },
 		[](Display& display) -> Context* { return new SpaceInvaders::SpaceInvaders(display); }
 };
