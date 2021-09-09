@@ -7,7 +7,7 @@
 #include <Loop/LoopManager.h>
 #include "Star.h"
 #include <Support/Context.h>
-#include "../Nibble.hpp"
+#include <ByteBoi.h>
 #include <UI/Image.h>
 extern Context* runningContext;
 extern bool exitingGame;
@@ -23,7 +23,7 @@ constexpr int STAR_COLOR = 0xffff;
 
 class SpaceInvaders: public Context, public LoopListener{
 public:
-	SpaceInvaders(Display& display);
+	SpaceInvaders(Display* display);
 	void draw() override;
 	void start() override;
 	void loop(uint) override;
