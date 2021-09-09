@@ -4,9 +4,9 @@
 #include "Highscore.h"
 uint drawTime = 0;
 SpaceInvaders::SpaceInvaders* SpaceInvaders::SpaceInvaders::instance = nullptr;
-SpaceInvaders::SpaceInvaders::SpaceInvaders(Display& display) :
-		Context(display), baseSprite(screen.getSprite()),
-		buttons(Input::getInstance()), display(&display)
+SpaceInvaders::SpaceInvaders::SpaceInvaders(Display* display) :
+		Context(*display), baseSprite(screen.getSprite()),
+		buttons(Input::getInstance()), display(display)
 {
 	instance = this;
 	randomSeed(millis()*micros());
@@ -15,7 +15,7 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(Display& display) :
 }
 void SpaceInvaders::SpaceInvaders::start()
 {
-	runningContext = this;
+	//runningContext = this;
 	Highscore.begin();
 	prevGamestatus = "";
 	draw();
@@ -29,7 +29,7 @@ void SpaceInvaders::SpaceInvaders::stop()
 	LoopManager::removeListener(this);
 }
 void SpaceInvaders::SpaceInvaders::pack(){
-	exitingGame = true;
+	//exitingGame = true;
 }
 
 void SpaceInvaders::SpaceInvaders::draw(){
