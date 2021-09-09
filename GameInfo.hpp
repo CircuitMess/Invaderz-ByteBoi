@@ -18,6 +18,6 @@ struct GameInfo {
 const GameInfo InvaderzInfo {
 		"Invaderz",
 		"A remake of the classic space invaders.",
-		[]() -> fs::File { return SPIFFS.open("/invaderz.raw"); },
+		[]() -> fs::File { return SPIFFS.open("/MainMenu/invaderz.raw"); },
 		[](Display& display) -> Context* { return new SpaceInvaders::SpaceInvaders(display); }
 };
