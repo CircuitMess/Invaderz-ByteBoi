@@ -9,8 +9,6 @@
 #include <Support/Context.h>
 #include <ByteBoi.h>
 #include <UI/Image.h>
-extern Context* runningContext;
-extern bool exitingGame;
 
 namespace SpaceInvaders
 {

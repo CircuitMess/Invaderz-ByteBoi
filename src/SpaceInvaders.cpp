@@ -15,7 +15,6 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(Display* display) :
 }
 void SpaceInvaders::SpaceInvaders::start()
 {
-	//runningContext = this;
 	Highscore.begin();
 	prevGamestatus = "";
 	draw();
@@ -29,7 +28,6 @@ void SpaceInvaders::SpaceInvaders::stop()
 	LoopManager::removeListener(this);
 }
 void SpaceInvaders::SpaceInvaders::pack(){
-	//exitingGame = true;
 }
 
 void SpaceInvaders::SpaceInvaders::draw(){
