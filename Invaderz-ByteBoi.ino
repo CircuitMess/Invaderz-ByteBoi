@@ -27,6 +27,7 @@ void setup() {
 	Serial.begin(115200);
 	ByteBoi.begin();
 	ByteBoi.getDisplay()->commit();
+	Piezo.begin(25);
 	LoopManager::addListener(Input::getInstance());
 	game=new SpaceInvaders::SpaceInvaders(ByteBoi.getDisplay());
 	LoopManager::addListener(game);
