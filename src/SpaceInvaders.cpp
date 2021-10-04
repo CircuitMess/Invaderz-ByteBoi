@@ -838,7 +838,7 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 				instance->gamestatus = "dataDisplay";
 				break;
 			case 2:
-				instance->pop();
+				ByteBoi.backToLauncher();
 		}
 	});
 }
