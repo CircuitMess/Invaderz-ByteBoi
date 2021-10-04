@@ -2,6 +2,7 @@
 
 #include <FS.h>
 #include <SPIFFS.h>
+#include <ByteBoi.h>
 
 SpaceInvaders::HighscoreImpl SpaceInvaders::Highscore;
 
@@ -63,13 +64,13 @@ uint8_t SpaceInvaders::HighscoreImpl::count(){
 }
 
 void SpaceInvaders::HighscoreImpl::save(){
-	File file = SPIFFS.open(HS_FILENAME, "w");
+	File file = ByteBoi.openData(HS_FILENAME, "w");
 	file.write((byte*) &data, sizeof(Data));
 	file.close();
 }
 
 void SpaceInvaders::HighscoreImpl::load(){
-	File file = SPIFFS.open(HS_FILENAME, "r");
+	File file = ByteBoi.openData(HS_FILENAME, "r");
 	file.readBytes((char*) &data , sizeof(Data));
 	file.close();
 }
