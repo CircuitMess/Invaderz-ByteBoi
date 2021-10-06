@@ -27,7 +27,7 @@ void setup() {
 	ByteBoi.begin();
 	ByteBoi.bindMenu();
 	BatteryPopup.enablePopups(true);
-	ByteBoi.setGameID("Invaderz");
+	ByteBoi.setGameID("InvaZ");
 	game=new SpaceInvaders::SpaceInvaders(ByteBoi.getDisplay());
 	game->unpack();
 	ByteBoi.splash();
