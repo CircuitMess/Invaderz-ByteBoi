@@ -26,6 +26,7 @@ void setup() {
 	Serial.begin(115200);
 	ByteBoi.begin();
 	ByteBoi.bindMenu();
+	BatteryPopup.enablePopups(true);
 	ByteBoi.setGameID("Invaderz");
 	game=new SpaceInvaders::SpaceInvaders(ByteBoi.getDisplay());
 	game->unpack();
