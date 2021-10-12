@@ -388,7 +388,7 @@ void SpaceInvaders::SpaceInvaders::drawplayershot() {
 void SpaceInvaders::SpaceInvaders::updatePlayerShot()
 {
 	if (shotx != -1) {
-		shoty = shoty - 4;
+		shoty = shoty - 6;
 		if (shoty < 0) {
 			shotx = -1;
 			shoty = -1;
@@ -435,8 +435,8 @@ void SpaceInvaders::SpaceInvaders::invaderlogic() {
 		}
 
 		// change invader position
-		invaderx[invaderctr] = invaderx[invaderctr] + invaderxr;
-		invadery[invaderctr] = invadery[invaderctr] + invaderyr;
+		invaderx[invaderctr] = invaderx[invaderctr] + invaderxr*3;
+		invadery[invaderctr] = invadery[invaderctr] + invaderyr*3;
 
 		// determine bunker removal if invaders are too low
 		if (invadery[invaderctr] > 80) {
