@@ -357,11 +357,13 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 		}
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
-		if (instance->shotx == -1 && instance->deadcounter == -1) {
+		if(instance->shotx == -1 && instance->deadcounter == -1){
+			instance->rgbLED.setRGB(static_cast<LEDColor>(LEDColor::YELLOW));
 			instance->shotx = instance->shipx + 6;
 			instance->shoty = instance->shipy - 2;
 			Piezo.tone(400, 50);
 		}
+		instance->rgbLED.setRGB(OFF);
 	});
 	buttons->setBtnPressCallback(BTN_B, [](){
 		Serial.println("paused");
