@@ -7,4 +7,6 @@ desktop.ini
 .vscode
 build
 test
+cmake-build-debug
+.idea
 .vs
