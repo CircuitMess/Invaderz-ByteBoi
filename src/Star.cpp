@@ -29,16 +29,18 @@ SOFTWARE.
 void SpaceInvaders::Star::randomize(int xMin, int xMax, int yMin, int yMax, int speedMin, int speedMax)
 {
     // Generate random values for the star.
+	microsCounter = 0;
     x = random(xMin, xMax);
-    y = random(yMin, yMax);
+    startingY = y = random(yMin, yMax);
     speed = random(speedMin, speedMax+1); // speedMax is +1 to make it inclusive.
+	startMillis = millis();
 }
 
 /**
  * Updates the position of the star.
  */
-void SpaceInvaders::Star::update()
+void SpaceInvaders::Star::update(uint offset)
 {
-    // Update the star's Y position based on its speed.
-    y += speed;
+	int period = (5000.0 / speed);
+	y = (int)(startingY + (((millis() - startMillis - offset) % period) * 120.0 / period)) % 120;
 }

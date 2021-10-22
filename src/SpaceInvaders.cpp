@@ -21,6 +21,9 @@ void SpaceInvaders::SpaceInvaders::start()
 	prevGamestatus = "";
 	draw();
 	LoopManager::addListener(this);
+	if(stopMillis != 0){
+		offset = millis() - stopMillis;
+	}
 }
 void SpaceInvaders::SpaceInvaders::stop()
 {
@@ -28,6 +31,7 @@ void SpaceInvaders::SpaceInvaders::stop()
 	// jb.clear();
 	// delete[] highscoresPath;
 	LoopManager::removeListener(this);
+	stopMillis = millis();
 }
 void SpaceInvaders::SpaceInvaders::pack(){
 }
@@ -121,15 +125,11 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 		for(int i = 0; i < STAR_COUNT; i++)
 		{
 			// Update the position of the star.
-			stars[i].update();
+			stars[i].update(offset);
 
 			// If the star's Y position is off the screen after the update.
-			if(stars[i].y >= baseSprite->height())
-			{
-				// Randomize its position.
-				stars[i].randomize(0, baseSprite->width(), 0, baseSprite->height(), STAR_SPEED_MIN, STAR_SPEED_MAX);
-				// Set its Y position back to the top.
-				stars[i].y = 0;
+			if(stars[i].y >= baseSprite->height()){
+				stars[i].x = random(1, baseSprite->width() - 1);
 			}
 		}
 	}
@@ -145,15 +145,11 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 		for(int i = 0; i < STAR_COUNT; i++)
 		{
 			// Update the position of the star.
-			stars[i].update();
+			stars[i].update(offset);
 
 			// If the star's Y position is off the screen after the update.
-			if(stars[i].y >= baseSprite->height())
-			{
-				// Randomize its position.
-				stars[i].randomize(0, baseSprite->width(), 0, baseSprite->height(), STAR_SPEED_MIN, STAR_SPEED_MAX);
-				// Set its Y position back to the top.
-				stars[i].y = 0;
+			if(stars[i].y >= baseSprite->height()){
+				stars[i].x = random(1, baseSprite->width() - 1);
 			}
 		}
 		invaderlogic(); // invader logic
@@ -785,9 +781,7 @@ void SpaceInvaders::SpaceInvaders::showtitle() {
 	baseSprite->clear(TFT_BLACK);
 	for(int i = 0; i < STAR_COUNT; i++)
 	{
-		// Remove the star from the screen by changing its pixel to the background color.
-		baseSprite->drawPixel(stars[i].x, stars[i].y, BACKGROUND_COLOR);
-		// Draw the star at its new coordinate.
+		if(stars[i].x > screen.getWidth() || stars[i].x < 0 ||  stars[i].y > screen.getHeight() || stars[i].y < 0) continue;
 		baseSprite->fillRect(stars[i].x, stars[i].y, 2, 2, STAR_COLOR);
 	}
 	baseSprite->setTextColor(TFT_WHITE);

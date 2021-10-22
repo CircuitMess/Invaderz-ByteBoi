@@ -37,8 +37,10 @@ class Star
 {
 	public:
     void randomize(int xMin, int xMax, int yMin, int yMax, int speedMin, int speedMax);
-    void update();
+    void update(uint offset);
     int x, y, speed;
+	int startingY;
+	uint32_t startMillis = 0;
 };
 
 };

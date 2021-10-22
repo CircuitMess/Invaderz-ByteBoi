@@ -92,6 +92,9 @@ private:
 	const uint8_t invadersColumns = 8;
 	const uint8_t invadersRows = 5;
 
+
+	uint32_t offset = 0;
+	uint32_t stopMillis = 0;
 	void starsSetup();
 	void drawBitmap(int16_t x, int16_t y, const byte *bitmap, uint16_t color, uint8_t scale);
 	void newgame();
