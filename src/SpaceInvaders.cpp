@@ -3,6 +3,7 @@
 #include <ByteBoi.h>
 #include "Highscore.h"
 #include <ByteBoiLED.h>
+#include <SD.h>
 
 uint drawTime = 0;
 SpaceInvaders::SpaceInvaders* SpaceInvaders::SpaceInvaders::instance = nullptr;
@@ -14,6 +15,14 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(Display* display) :
 	randomSeed(millis()*micros());
 	starsSetup();
 	gamestatus = "title";
+
+	SD.begin(SD_CS, SPI);
+
+	Samples.menu = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Menu.aac"));
+	Samples.game = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Game.aac"));
+	Samples.menu->setLooping(true);
+	Samples.game->setLooping(true);
+
 }
 void SpaceInvaders::SpaceInvaders::start()
 {
@@ -21,6 +30,12 @@ void SpaceInvaders::SpaceInvaders::start()
 	prevGamestatus = "";
 	draw();
 	LoopManager::addListener(this);
+
+	if(gamestatus == "title"){
+		Playback.play(Samples.menu);
+	}else if(gamestatus == "running"){
+		Playback.play(Samples.game);
+	}
 }
 void SpaceInvaders::SpaceInvaders::stop()
 {
@@ -28,6 +43,7 @@ void SpaceInvaders::SpaceInvaders::stop()
 	// jb.clear();
 	// delete[] highscoresPath;
 	LoopManager::removeListener(this);
+	Playback.stop();
 }
 void SpaceInvaders::SpaceInvaders::pack(){
 }
@@ -245,6 +261,8 @@ void SpaceInvaders::SpaceInvaders::newgame() {
 		invadershoty[i] = -1;
 	}
 	gamestatus = "newlevel";
+
+	Playback.play(Samples.game);
 }
 //----------------------------------------------------------------------------
 void SpaceInvaders::SpaceInvaders::newlevel() {
@@ -845,6 +863,8 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 				ByteBoi.backToLauncher();
 		}
 	});
+
+	Playback.play(Samples.menu);
 }
 
 void SpaceInvaders::SpaceInvaders::enterInitialsSetup()
@@ -915,6 +935,8 @@ void SpaceInvaders::SpaceInvaders::enterInitialsSetup()
 		instance->blinkState = 1;
 		instance->elapsedMillis = millis();
 	});
+
+	Playback.stop();
 }
 void SpaceInvaders::SpaceInvaders::enterInitialsUpdate() {
   

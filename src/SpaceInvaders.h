@@ -92,6 +92,11 @@ private:
 	const uint8_t invadersColumns = 8;
 	const uint8_t invadersRows = 5;
 
+	struct {
+		Sample* menu = nullptr;
+		Sample* game = nullptr;
+	} Samples;
+
 	void starsSetup();
 	void drawBitmap(int16_t x, int16_t y, const byte *bitmap, uint16_t color, uint8_t scale);
 	void newgame();
