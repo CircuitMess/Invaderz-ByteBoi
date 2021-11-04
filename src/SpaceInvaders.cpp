@@ -385,7 +385,6 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 		}
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
-		instance->gamestatus = "gameover";
 		if(instance->shotx == -1 && instance->deadcounter == -1){
 			LED.setRGB(static_cast<LEDColor>(LEDColor::YELLOW));
 			instance->shotx = instance->shipx + 6;
