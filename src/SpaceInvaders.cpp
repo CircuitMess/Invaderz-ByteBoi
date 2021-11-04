@@ -18,9 +18,11 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(Display* display) :
 
 	SD.begin(SD_CS, SPI);
 
+	Samples.gameOver = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/GameOver.aac"), true);
 	Samples.menu = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Menu.aac"));
 	Samples.game = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Game.aac"));
 	Samples.menu->setLooping(true);
+	Samples.gameOver->setLooping(false);
 	Samples.game->setLooping(true);
 
 }
@@ -181,12 +183,17 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 	}
 	if (gamestatus == "gameover") { // game over
 		if(screenChange){
+			Playback.stop();
+			delay(100);
+			Playback.play(Samples.gameOver);
 			clearButtonCallbacks();
 			buttons->setBtnPressCallback(BTN_A, [](){
 				instance->gamestatus = "enterInitials";
+				Playback.stop();
 			});
 			buttons->setBtnPressCallback(BTN_B, [](){
 				instance->gamestatus = "enterInitials";
+				Playback.stop();
 			});
 		}
 	}
@@ -195,6 +202,7 @@ void SpaceInvaders::SpaceInvaders::loop(uint)
 		if(screenChange){
 			clearButtonCallbacks();
 			buttons->setBtnPressCallback(BTN_A, [](){
+				Playback.play(instance->Samples.game);
 				instance->gamestatus = "running";
 				instance->setButtonsCallbacks();
 			});
@@ -377,6 +385,7 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 		}
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
+		instance->gamestatus = "gameover";
 		if(instance->shotx == -1 && instance->deadcounter == -1){
 			LED.setRGB(static_cast<LEDColor>(LEDColor::YELLOW));
 			instance->shotx = instance->shipx + 6;
@@ -387,6 +396,7 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 	});
 	buttons->setBtnPressCallback(BTN_B, [](){
 		Serial.println("paused");
+		Playback.stop();
 		instance->gamestatus = "paused";
 	});
 }

@@ -95,6 +95,7 @@ private:
 	struct {
 		Sample* menu = nullptr;
 		Sample* game = nullptr;
+		Sample* gameOver = nullptr;
 	} Samples;
 
 	void starsSetup();
@@ -129,6 +130,5 @@ private:
 	void enterInitialsUpdate();
 
 };
-
 };
 #endif
