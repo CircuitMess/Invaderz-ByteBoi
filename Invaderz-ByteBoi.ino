@@ -17,7 +17,7 @@
 #include <Loop/LoopManager.h>
 #include <SPIFFS.h>
 #include <ByteBoi.h>
-
+#include <SleepService.h>
 //#include "Nibble.hpp"
 #include <Audio/Piezo.h>
 
@@ -25,6 +25,7 @@ SpaceInvaders::SpaceInvaders* game;
 void setup() {
 	Serial.begin(115200);
 	ByteBoi.begin();
+	Sleep.begin();
 	ByteBoi.bindMenu();
 	BatteryPopup.enablePopups(true);
 	ByteBoi.setGameID("InvaZ");
