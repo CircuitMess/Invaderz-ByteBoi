@@ -376,12 +376,12 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 	clearButtonCallbacks();
 	buttons->setButtonHeldRepeatCallback(BTN_LEFT, 10, [](uint){
 		if (instance->shipx > 0 && instance->deadcounter == -1) {
-			instance->shipx-=3;
+			instance->shipx-=5;
 		}
 	});
 	buttons->setButtonHeldRepeatCallback(BTN_RIGHT, 10, [](uint){
 		if (instance->shipx < 143 && instance->deadcounter == -1) {
-			instance->shipx+=3;
+			instance->shipx+=5;
 		}
 	});
 	buttons->setBtnPressCallback(BTN_A, [](){
@@ -419,7 +419,7 @@ void SpaceInvaders::SpaceInvaders::drawplayershot() {
 void SpaceInvaders::SpaceInvaders::updatePlayerShot()
 {
 	if (shotx != -1) {
-		shoty = shoty - 6;
+		shoty = shoty - 8;
 		if (shoty < 0) {
 			shotx = -1;
 			shoty = -1;
