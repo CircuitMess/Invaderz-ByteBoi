@@ -16,8 +16,6 @@ SpaceInvaders::SpaceInvaders::SpaceInvaders(Display* display) :
 	starsSetup();
 	gamestatus = "title";
 
-	SD.begin(SD_CS, SPI);
-
 	Samples.gameOver = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/GameOver.aac"), true);
 	Samples.menu = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Menu.aac"));
 	Samples.game = new Sample(SD.open(ByteBoi.getSDPath() + "/Music/Game.aac"));
