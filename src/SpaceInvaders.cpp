@@ -387,7 +387,7 @@ void SpaceInvaders::SpaceInvaders::setButtonsCallbacks() {
 			LED.setRGB(static_cast<LEDColor>(LEDColor::YELLOW));
 			instance->shotx = instance->shipx + 6;
 			instance->shoty = instance->shipy - 2;
-			Playback.tone(400, 50);
+			Playback.tone(400, 200, Wave::SAW);
 		}
 		LED.setRGB(OFF);
 	});
@@ -552,7 +552,7 @@ void SpaceInvaders::SpaceInvaders::drawinvaders() {
 			shotx = -1;
 			shoty = -1;
 			// destroyed->note(10, 0.05);
-			Playback.tone(50, 50);
+			Playback.tone(100, 200, Wave::SQUARE);
 
 			// invaderDestroyed->play();
 		}
@@ -605,7 +605,8 @@ void SpaceInvaders::SpaceInvaders::updateInvaderShot() {
 			if (deadcounter == -1 && invadershotx[i] + 1 >= checkl && invadershotx[i] <= checkr && invadershoty[i] + 3 >= checkt && invadershoty[i] <= checkb) {
 				deadcounter = 60;
 				// destroyed->note(10, 0.05);
-				Playback.tone(50, 50);
+				Playback.tone(80, 800, Wave::SAW);
+				Playback.tone(100, 400, Wave::SAW);
 				// playerDestroyed->play();
 			}
 
@@ -843,7 +844,7 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 			instance->cursor--;
 			instance->blinkMillis = millis();
 			instance->blinkState = 1;
-			Playback.tone(500, 50);
+			Playback.tone(500, 100);
 		}
 	});
 	buttons->setBtnPressCallback(BTN_DOWN, [](){
@@ -852,7 +853,7 @@ void SpaceInvaders::SpaceInvaders::titleSetup()
 			instance->cursor++;
 			instance->blinkMillis = millis();
 			instance->blinkState = 1;
-			Playback.tone(500, 50);
+			Playback.tone(500, 100);
 		}
 	});
 	
